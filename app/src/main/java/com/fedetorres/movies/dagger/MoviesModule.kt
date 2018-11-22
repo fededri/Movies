@@ -1,6 +1,9 @@
 package com.fedetorres.movies.dagger
 
-import com.fedetorres.movies.main.MoviesModel
+import com.fedetorres.movies.database.DbManager
+import com.fedetorres.movies.main.MainViewModel
+import com.fedetorres.movies.main.MoviesApiModel
+import com.fedetorres.movies.network.ApiErrorParser
 import com.fedetorres.movies.network.MoviesApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -11,13 +14,25 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 @Module
 class MoviesModule {
 
+
+    @Singleton
     @Provides
-    fun moviesModel(api: MoviesApi): MoviesModel {
-        return MoviesModel(api)
+    fun mainViewModel(
+        moviesModel: MoviesApiModel,
+        dbManager: DbManager,
+        apiErrorParser: ApiErrorParser
+    ): MainViewModel {
+        return MainViewModel(moviesModel, dbManager, apiErrorParser)
+    }
+
+    @Provides
+    fun moviesModel(api: MoviesApi, dbManager: DbManager): MoviesApiModel {
+        return MoviesApiModel(api)
     }
 
     @Provides

@@ -1,5 +1,10 @@
 package com.fedetorres.movies.network
 
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
+
 
 data class GetMoviesResponse(
     val average_rating: Double,
@@ -11,7 +16,7 @@ data class GetMoviesResponse(
     val iso_3166_1: String,
     val iso_639_1: String,
     val name: String,
-    val object_ids: Map<String,String?>,
+    val object_ids: Map<String, String?>,
     val page: Int,
     val poster_path: String,
     val `public`: Boolean,
@@ -30,20 +35,24 @@ data class CreatedBy(
     val username: String
 )
 
-data class Movie(
-    val adult: Boolean,
-    val backdrop_path: String,
-    val genre_ids: List<Int>,
-    val id: Int,
-    val media_type: String,
-    val original_language: String,
-    val original_title: String,
-    val overview: String,
-    val popularity: Double,
-    val poster_path: String,
-    val release_date: String,
-    val title: String,
-    val video: Boolean,
-    val vote_average: Double,
-    val vote_count: Int
-)
+@RealmClass
+open class Movie : RealmObject() {
+    open var adult: Boolean? = null
+    open var backdrop_path: String? = null
+    open var genre_ids: RealmList<Int>? = null
+    @PrimaryKey
+    open var id: Int? = null
+    open var media_type: String? = null
+    open var original_language: String? = null
+    open var original_title: String? = null
+    open var overview: String? = null
+    open var popularity: Double? = null
+    open var poster_path: String? = null
+    open var release_date: String? = null
+    open var title: String? = null
+    open var video: Boolean? = null
+    open var vote_average: Double? = null
+    open var vote_count: Int? = null
+    open var picture: String? = null
+
+}

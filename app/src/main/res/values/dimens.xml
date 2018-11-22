@@ -1,0 +1,5 @@
+<resources>
+
+
+    <dimen name="movie_card_offset">20dp</dimen>
+</resources>

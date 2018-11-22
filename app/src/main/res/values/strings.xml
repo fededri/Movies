@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">Movies</string>
 
-    <string name="movies_read_access_token">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMmRkMmZmZmY0YzM5ZTBmODAwNTE3MmE3YjFlODIzZCIsInN1YiI6IjViZjQ3NTFjYzNhMzY4MThhZTA5ZGVhMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cerWt0TIs-ARuJU1iwsq8medj5IrhAMasBPhJpY9_2w</string>
+    <string name="movies_read_access_token">
+        eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMmRkMmZmZmY0YzM5ZTBmODAwNTE3MmE3YjFlODIzZCIsInN1YiI6IjViZjQ3NTFjYzNhMzY4MThhZTA5ZGVhMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cerWt0TIs-ARuJU1iwsq8medj5IrhAMasBPhJpY9_2w
+    </string>
     <string name="movies_api_key">f2dd2ffff4c39e0f8005172a7b1e823d</string>
+    <string name="timeout">Time has run out, try again later</string>
+    <string name="unknown_error">An unknown error has occurred</string>
+
+    <string name="vote_avg_placeholder">Vote average: %1$s</string>
+    <string name="vote_count_placeholder">Vote count: %1$s</string>
+    <string name="release_date_placeholder">Release date %1$s</string>
+    <string name="vote_average_placeholder">Vote Average: %1$s</string>
 </resources>
