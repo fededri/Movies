@@ -9,8 +9,10 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.animation.BounceInterpolator
+import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.fedetorres.movies.*
 import com.fedetorres.movies.main.moviesList.ItemOffsetDecoration
@@ -25,6 +27,8 @@ class MainActivity : BaseActivity() {
     private val btUpcoming: Button by inflate(R.id.bt_upcoming)
     private val progressBar: ProgressBar  by inflate(R.id.progressBar)
     private val recyclerView: RecyclerView by inflate(R.id.recyclerView)
+    private val etSearch: EditText by inflate(R.id.et_search)
+    private val toolbar: Toolbar by inflate(R.id.toolbar)
 
     val buttons = mutableListOf<Button>()
 
@@ -51,6 +55,16 @@ class MainActivity : BaseActivity() {
     private fun showButtons() {
         recyclerView.gone()
         tvTitle.visible()
+
+
+        toolbar.animateView(
+            property = View.ALPHA,
+            finalViewVisibility = View.INVISIBLE,
+            duration = 500,
+            initialScale = 1f,
+            finalScale = 0f
+        )
+
         buttons.forEach {
             it.visible()
 
@@ -61,6 +75,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
+
     private fun hideButtons(onHideEnd: (() -> Unit)? = null) {
         tvTitle.gone()
         var counter = 1
@@ -70,6 +85,15 @@ class MainActivity : BaseActivity() {
                 if (counter == buttons.size) onHideEnd?.invoke()
             }
         }
+
+        toolbar.visible()
+        toolbar.animateView(
+            property = View.ALPHA,
+            finalViewVisibility = View.VISIBLE,
+            duration = 500,
+            initialScale = 0f,
+            finalScale = 1f
+        )
 
         buttons.forEach {
             it.animateView(
@@ -84,16 +108,28 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViews() {
-        btPopular.setOnClickListener { viewModel.getMovies(CATEGORY.POPULAR) }
-        btTopRated.setOnClickListener { viewModel.getMovies(CATEGORY.TOP_RATED) }
-        btUpcoming.setOnClickListener { viewModel.getMovies(CATEGORY.UPCOMING) }
+        btPopular.setOnClickListener { viewModel.onCategoryClick(CATEGORY.POPULAR) }
+        btTopRated.setOnClickListener { viewModel.onCategoryClick(CATEGORY.TOP_RATED) }
+        btUpcoming.setOnClickListener { viewModel.onCategoryClick(CATEGORY.UPCOMING) }
         buttons.add(btPopular)
         buttons.add(btTopRated)
         buttons.add(btUpcoming)
+
+        etSearch.setOnEditorActionListener { v, actionId, event ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    viewModel.search(etSearch.text.toString())
+                    true
+                }
+                else -> false
+
+            }
+
+        }
     }
 
 
-    private fun onNewState(state: MainState) {
+    fun onNewState(state: MainState) {
 
         if (currentState == state) return
 

@@ -1,6 +1,7 @@
 package com.fedetorres.movies.network
 
-import io.reactivex.Single
+import com.fedetorres.movies.network.responses.GetMoviesResponse
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -15,7 +16,7 @@ interface MoviesApi {
         @Path("listId") list: Int,
         @Query("page") page: Int? = null,
         @Query("sort_by") sort: String? = null
-    ): Single<GetMoviesResponse>
+    ): Observable<GetMoviesResponse>
 
 
 

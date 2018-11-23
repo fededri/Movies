@@ -7,7 +7,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 
-class ApiErrorParser @Inject constructor(val context: Context) {
+open class ApiErrorParser @Inject constructor(val context: Context) {
 
     fun parseError(error: Throwable): String? {
         return when (error) {

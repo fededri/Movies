@@ -11,8 +11,7 @@ import android.widget.TextView
 import com.fedetorres.movies.GlideApp
 import com.fedetorres.movies.R
 import com.fedetorres.movies.main.movieDetail.MovieDetailActivity
-import com.fedetorres.movies.network.Movie
-import javax.inject.Inject
+import com.fedetorres.movies.database.entities.Movie
 
 class MoviesAdapter(private val context: Context, val movies: MutableList<Movie>) :
     RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder>() {

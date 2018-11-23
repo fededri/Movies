@@ -1,8 +1,9 @@
 package com.fedetorres.movies.dagger
 
-import com.fedetorres.movies.database.DbManager
+
 import com.fedetorres.movies.main.MainViewModel
 import com.fedetorres.movies.main.MoviesApiModel
+import com.fedetorres.movies.main.MoviesRepository
 import com.fedetorres.movies.network.ApiErrorParser
 import com.fedetorres.movies.network.MoviesApi
 import com.google.gson.Gson
@@ -23,15 +24,14 @@ class MoviesModule {
     @Singleton
     @Provides
     fun mainViewModel(
-        moviesModel: MoviesApiModel,
-        dbManager: DbManager,
+        repository: MoviesRepository,
         apiErrorParser: ApiErrorParser
     ): MainViewModel {
-        return MainViewModel(moviesModel, dbManager, apiErrorParser)
+        return MainViewModel(repository, apiErrorParser)
     }
 
     @Provides
-    fun moviesModel(api: MoviesApi, dbManager: DbManager): MoviesApiModel {
+    fun moviesModel(api: MoviesApi): MoviesApiModel {
         return MoviesApiModel(api)
     }
 

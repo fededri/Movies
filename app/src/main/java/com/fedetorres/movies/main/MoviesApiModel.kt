@@ -1,14 +1,9 @@
 package com.fedetorres.movies.main
 
-import android.util.Log
-import com.fedetorres.movies.database.DbManager
-import com.fedetorres.movies.network.GetMoviesResponse
-import com.fedetorres.movies.network.Movie
+
+import com.fedetorres.movies.database.entities.Movie
 import com.fedetorres.movies.network.MoviesApi
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
+import io.reactivex.Observable
 
 class MoviesApiModel(private val api: MoviesApi) {
 
@@ -20,7 +15,7 @@ class MoviesApiModel(private val api: MoviesApi) {
         val TAG = "MoviesApiModel"
     }
 
-    fun getMovies(list: Int = 1, page: Int = 1, sortBy: String? = null): Single<List<Movie>> {
+    fun getMovies(list: Int = 1, page: Int = 1, sortBy: String? = null): Observable<List<Movie>> {
         return api.getMovies(
             type = contentType,
             authorization = authorizationBearer,

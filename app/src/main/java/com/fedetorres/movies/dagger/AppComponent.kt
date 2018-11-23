@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-@Component(modules = arrayOf(ContextModule::class, MoviesModule::class, RealmModule::class) )
+@Component(modules = arrayOf(ContextModule::class, MoviesModule::class, RoomModule::class) )
 interface AppComponent {
 
     fun inject(activity: MainActivity)
