@@ -105,14 +105,14 @@ open class MainViewModel @Inject constructor(
             message = apiErrorParser.parseError(error)
 
         }
-        postState(state()?.copy(loading = false, error = message))
+        postState(state()?.copy(loading = false, error = message, selectedCategory = null, movies = null))
 
     }
 
 
     private fun searchMovies(state: MainState?) {
         //Maybe it is better  to do a  SQL QUERY rather than filtering with RX, but  if this data were taken from the webservice it would be better to do this
-        val disposable = repository.getMoviesFromDb(state?.keyword)
+        val disposable = repository.getMoviesFromDb()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .flatMap {

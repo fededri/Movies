@@ -12,25 +12,19 @@ open class MoviesRepository @Inject constructor(val moviesApiModel: MoviesApiMod
 
 
     fun getMovies(
-        keyword: String? = null,
-        sort: String? = null,
-        callback: ((error: Throwable?) -> Unit)? = null
+        sort: String? = null
     ): Single<List<Movie>> {
-        return Observable.concatArrayDelayError(getMoviesFromWebService(sortBy = sort), getMoviesFromDb(keyword))
-            .materialize()
-            .filter {
-                if (it.isOnError) callback?.invoke(it.error)
-                !it.isOnError
-            }
-            .dematerialize<List<Movie>>()
+        return getMoviesFromWebService(sortBy = sort)
+            .onErrorResumeNext(getMoviesFromDb())
             .flatMap {
                 Observable.fromIterable(it)
             }
             .toList()
     }
 
-    fun getMoviesFromDb(keyword: String? = null): Observable<List<Movie>> {
-        return movieDao.getMovies().toObservable()
+    fun getMoviesFromDb(): Observable<List<Movie>> {
+        return movieDao.getMovies()
+            .toObservable()
     }
 
 

@@ -29,6 +29,8 @@ class MainActivity : BaseActivity() {
     private val recyclerView: RecyclerView by inflate(R.id.recyclerView)
     private val etSearch: EditText by inflate(R.id.et_search)
     private val toolbar: Toolbar by inflate(R.id.toolbar)
+    private val tvNotMoviesFound: TextView by inflate(R.id.tv_no_movies_found)
+
 
     val buttons = mutableListOf<Button>()
 
@@ -55,6 +57,7 @@ class MainActivity : BaseActivity() {
     private fun showButtons() {
         recyclerView.gone()
         tvTitle.visible()
+        noMoviesFoundMessage(false)
 
 
         toolbar.animateView(
@@ -143,6 +146,8 @@ class MainActivity : BaseActivity() {
 
         }
 
+
+
         currentState = state
 
     }
@@ -164,25 +169,61 @@ class MainActivity : BaseActivity() {
 
 
     private fun showMoviesList(state: MainState) {
-        hideButtons {
-            recyclerView.visible()
-            if (state.movies != null) {
-                if (recyclerView.adapter == null) {
-                    val adapter = MoviesAdapter(this, state.movies.toMutableList())
-                    recyclerView.adapter = adapter
-                    recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                    recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-                    recyclerView.addItemDecoration(ItemOffsetDecoration(this, R.dimen.movie_card_offset))
 
-                } else {
-                    val adapter = recyclerView.adapter as? MoviesAdapter
-                    adapter?.movies?.clear()
-                    adapter?.movies?.addAll(state.movies)
-                    adapter?.notifyDataSetChanged()
+        if (foundMovies(state)) {
+            recyclerView.gone()
+            noMoviesFoundMessage(true)
+
+        } else {
+            noMoviesFoundMessage(false)
+            //first hide the buttons, and when animations ends show the list of movies
+            hideButtons {
+                recyclerView.visible()
+                if (state.movies != null) {
+                    if (recyclerView.adapter == null) {
+                        val adapter = MoviesAdapter(this, state.movies.toMutableList())
+                        recyclerView.adapter = adapter
+                        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+                        recyclerView.addItemDecoration(ItemOffsetDecoration(this, R.dimen.movie_card_offset))
+
+                    } else {
+                        val adapter = recyclerView.adapter as? MoviesAdapter
+                        adapter?.movies?.clear()
+                        adapter?.movies?.addAll(state.movies)
+                        adapter?.notifyDataSetChanged()
+                    }
                 }
             }
         }
 
+
+    }
+
+
+    private fun foundMovies(state: MainState?) = state?.movies != null && state.movies.isEmpty()
+
+
+    private fun noMoviesFoundMessage(visible: Boolean = false) {
+        if (visible) {
+            tvNotMoviesFound.visible()
+            tvNotMoviesFound.animateView(
+                property = View.ALPHA,
+                initialScale = 0f,
+                finalScale = 1f,
+                duration = 500,
+                finalViewVisibility = View.VISIBLE
+            )
+        } else if (tvNotMoviesFound.visibility == View.VISIBLE) {
+            //only play hide animation if this view is visible
+            tvNotMoviesFound.animateView(
+                property = View.ALPHA,
+                initialScale = 1f,
+                finalScale = 0f,
+                duration = 500,
+                finalViewVisibility = View.GONE
+            )
+        }
 
     }
 
