@@ -75,10 +75,10 @@ open class MainViewModel @Inject constructor(
         postState(state?.loading(true))
 
         val sort = getSortString(category)
-        val disposable = repository.getMoviesFromWebService(1, 1, sort)
+        val disposable = repository.getMovies(sort = sort)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
-            .subscribe(this::onMoviesObtained, this::errorGettingMoviesFromAPI)
+            .subscribe(this::onMoviesObtained, this::failureGettingMovies)
 
         if (disposable != null)
             compositeDisposable.add(disposable)
@@ -98,21 +98,15 @@ open class MainViewModel @Inject constructor(
         postState(state()?.copy(movies = movies, loading = false, error = null))
     }
 
-    private fun errorGettingMoviesFromAPI(error: Throwable) {
-        val disposable = repository.getMoviesFromDb()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe(this::onMoviesObtained, this::failureGettingMovies)
 
-        if (disposable != null)
-            compositeDisposable.add(disposable)
+    private fun failureGettingMovies(error: Throwable?) {
+        var message: String? = "Unknown error"
+        error?.let {
+            message = apiErrorParser.parseError(error)
 
-
-    }
-
-    private fun failureGettingMovies(error: Throwable) {
-        val message = apiErrorParser.parseError(error)
+        }
         postState(state()?.copy(loading = false, error = message))
+
     }
 
 
