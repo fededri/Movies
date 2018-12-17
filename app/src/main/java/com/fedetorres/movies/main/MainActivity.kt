@@ -68,6 +68,8 @@ class MainActivity : BaseActivity() {
             finalScale = 0f
         )
 
+        buttons.run {  }
+
         buttons.forEach {
             it.visible()
 

@@ -7,21 +7,26 @@ import android.util.Log
 import com.fedetorres.movies.network.ApiErrorParser
 import com.fedetorres.movies.database.entities.Movie
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+import javax.inject.Named
 
 open class MainViewModel @Inject constructor(
     private val repository: MoviesRepository,
-    private val apiErrorParser: ApiErrorParser
+    private val apiErrorParser: ApiErrorParser,
+    @Named("ioThread") private val ioScheduler: Scheduler,
+    @Named("mainThread") private val androidScheduler: Scheduler
 
 ) :
     ViewModel() {
 
+
+
     companion object {
         val TAG = "MainViewModel"
     }
+
 
     private val data: MutableLiveData<MainState> = MutableLiveData()
     private val compositeDisposable = CompositeDisposable()
@@ -76,8 +81,8 @@ open class MainViewModel @Inject constructor(
 
         val sort = getSortString(category)
         val disposable = repository.getMovies(sort = sort)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
+            .observeOn(androidScheduler)
+            .subscribeOn(ioScheduler)
             .subscribe(this::onMoviesObtained, this::failureGettingMovies)
 
         if (disposable != null)
@@ -111,10 +116,11 @@ open class MainViewModel @Inject constructor(
 
 
     private fun searchMovies(state: MainState?) {
+
         //Maybe it is better  to do a  SQL QUERY rather than filtering with RX, but  if this data were taken from the webservice it would be better to do this
         val disposable = repository.getMoviesFromDb()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
+            .observeOn(androidScheduler)
+            .subscribeOn(ioScheduler)
             .flatMap {
                 Observable.fromIterable(it)
             }.filter { if (state?.keyword != null) it.title.contains(state.keyword, true) else true }
@@ -129,7 +135,7 @@ open class MainViewModel @Inject constructor(
 
     private fun state(): MainState? = data.value
 
-    private fun postState(state: MainState?) {
+    fun postState(state: MainState?) {
         data.postValue(state)
     }
 

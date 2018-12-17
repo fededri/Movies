@@ -8,7 +8,7 @@ import io.reactivex.Single
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-open class MoviesRepository @Inject constructor(val moviesApiModel: MoviesApiModel, val movieDao: MovieDao) {
+class MoviesRepository @Inject constructor(val moviesApiModel: MoviesApiModel, val movieDao: MovieDao) {
 
 
     fun getMovies(
@@ -33,7 +33,7 @@ open class MoviesRepository @Inject constructor(val moviesApiModel: MoviesApiMod
         page: Int = 1,
         sortBy: String? = null
     ): Observable<List<Movie>> {
-        return moviesApiModel.getMovies(list, page, sortBy)
+        return moviesApiModel.getMovies(list, page, sortBy!!)
             .doOnNext { movieDao.insertAll(it) }
     }
 

@@ -10,24 +10,42 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class MoviesModule {
 
 
+    @Provides
+    @Named("mainThread")
+    fun mainScheduler(): Scheduler {
+        return AndroidSchedulers.mainThread()
+    }
+
+    @Provides
+    @Named("ioThread")
+    fun ioScheduler() : Scheduler{
+        return Schedulers.io()
+    }
+
     @Singleton
     @Provides
     fun mainViewModel(
         repository: MoviesRepository,
-        apiErrorParser: ApiErrorParser
+        apiErrorParser: ApiErrorParser,
+        @Named("ioThread") ioScheduler: Scheduler,
+        @Named("mainThread") androidScheduler: Scheduler
     ): MainViewModel {
-        return MainViewModel(repository, apiErrorParser)
+        return MainViewModel(repository, apiErrorParser,ioScheduler,androidScheduler)
     }
 
     @Provides

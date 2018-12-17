@@ -13,7 +13,7 @@ interface MoviesApi {
     fun getMovies(
         @Header("Content-Type") type: String,
         @Header("Authorization") authorization: String,
-        @Path("listId") list: Int,
+        @Path("listId") list: Int?,
         @Query("page") page: Int? = null,
         @Query("sort_by") sort: String? = null
     ): Observable<GetMoviesResponse>
