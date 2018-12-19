@@ -68,7 +68,7 @@ class MainActivity : BaseActivity() {
             finalScale = 0f
         )
 
-        buttons.run {  }
+        buttons.run { }
 
         buttons.forEach {
             it.visible()
@@ -191,9 +191,7 @@ class MainActivity : BaseActivity() {
 
                     } else {
                         val adapter = recyclerView.adapter as? MoviesAdapter
-                        adapter?.movies?.clear()
-                        adapter?.movies?.addAll(state.movies)
-                        adapter?.notifyDataSetChanged()
+                        adapter?.updateMovies(state.movies)
                     }
                 }
             }

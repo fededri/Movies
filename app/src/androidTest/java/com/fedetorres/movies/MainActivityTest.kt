@@ -36,5 +36,4 @@ class MainActivityTest {
         onView(withId(R.id.bt_upcoming)).check(matches(not(isDisplayed())))
         onView(withId(R.id.recyclerView)).check(matches(isDisplayed()))
     }
-
 }

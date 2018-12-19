@@ -69,29 +69,33 @@
             android:text="Select a Category!"
             android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 
-    <Button
+    <android.support.design.button.MaterialButton
             android:id="@+id/bt_popular"
             style="@style/ButtonCategoryStyle"
             android:text="Popular"
+            app:cornerRadius="16dp"
             app:layout_constraintBottom_toTopOf="@+id/bt_top_rated"
             app:layout_constraintTop_toBottomOf="@+id/tv_title"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <Button
+    <android.support.design.button.MaterialButton
             android:id="@+id/bt_top_rated"
             style="@style/ButtonCategoryStyle"
             android:text="Top Rated"
+            app:cornerRadius="16dp"
             app:layout_constraintBottom_toTopOf="@+id/bt_upcoming"
             app:layout_constraintTop_toBottomOf="@+id/bt_popular"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
 
-    <Button
+    <android.support.design.button.MaterialButton
             android:id="@+id/bt_upcoming"
             style="@style/ButtonCategoryStyle"
+            app:backgroundTint="@color/colorPrimary"
             android:text="Upcoming"
+            app:cornerRadius="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bt_top_rated"
             app:layout_constraintRight_toRightOf="parent"
