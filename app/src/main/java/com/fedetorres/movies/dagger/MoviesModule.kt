@@ -8,6 +8,7 @@ import com.fedetorres.movies.network.ApiErrorParser
 import com.fedetorres.movies.network.MoviesApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
@@ -65,6 +66,7 @@ class MoviesModule {
             .baseUrl("https://api.themoviedb.org/4/")
             .addConverterFactory(gsonConverter)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }
 

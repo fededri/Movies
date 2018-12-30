@@ -15,6 +15,9 @@ interface MovieDao {
     fun getMovies(): Single<List<Movie>>
 
 
+    @Query("SELECT * FROM movies")
+    fun getMoviesCoroutine(): List<Movie>
+
     @Query("SELECT * FROM movies WHERE id = :id")
     fun getMovie(id: Int): Movie
 

@@ -9,6 +9,7 @@ import com.fedetorres.movies.database.entities.Movie
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -22,7 +23,6 @@ open class MainViewModel @Inject constructor(
     ViewModel() {
 
 
-
     companion object {
         val TAG = "MainViewModel"
     }
@@ -30,7 +30,7 @@ open class MainViewModel @Inject constructor(
 
     private val data: MutableLiveData<MainState> = MutableLiveData()
     private val compositeDisposable = CompositeDisposable()
-
+    private var job: Job? = null
 
     init {
         data.postValue(MainState())
@@ -45,11 +45,13 @@ open class MainViewModel @Inject constructor(
         val newState = state()?.category(category)
         postState(newState)
         getMovies(newState)
+        //getMovies(newState)
     }
 
 
     override fun onCleared() {
         compositeDisposable.clear()
+        job?.cancel()
         super.onCleared()
     }
 
@@ -75,18 +77,23 @@ open class MainViewModel @Inject constructor(
 
     /***********************Private Methods*********************************************************/
 
+
     private fun getMovies(state: MainState?) {
         val category = state?.selectedCategory
         postState(state?.loading(true))
-
         val sort = getSortString(category)
-        val disposable = repository.getMovies(sort = sort)
-            .observeOn(androidScheduler)
-            .subscribeOn(ioScheduler)
-            .subscribe(this::onMoviesObtained, this::failureGettingMovies)
 
-        if (disposable != null)
-            compositeDisposable.add(disposable)
+        job = CoroutineScope(Dispatchers.IO).launch {
+            val movies = repository.getMovies(sortBy = sort)
+
+            withContext(Dispatchers.Main) {
+                if (movies != null)
+                    onMoviesObtained(movies)
+                else failureGettingMovies(null)
+
+            }
+        }
+
     }
 
     private fun getSortString(category: CATEGORY?): String? {

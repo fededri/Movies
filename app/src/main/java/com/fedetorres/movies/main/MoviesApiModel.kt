@@ -4,10 +4,12 @@ package com.fedetorres.movies.main
 import com.fedetorres.movies.database.entities.Movie
 import com.fedetorres.movies.network.MoviesApi
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
 
 open class MoviesApiModel(private val api: MoviesApi) {
 
-     val authorizationBearer: String = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMmRkMmZmZmY0YzM5ZTBmODAwNTE3MmE3YjFlODIzZCIsInN1YiI6IjViZjQ3NTFjYzNhMzY4MThhZTA5ZGVhMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cerWt0TIs-ARuJU1iwsq8medj5IrhAMasBPhJpY9_2w"
+    val authorizationBearer: String =
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMmRkMmZmZmY0YzM5ZTBmODAwNTE3MmE3YjFlODIzZCIsInN1YiI6IjViZjQ3NTFjYzNhMzY4MThhZTA5ZGVhMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cerWt0TIs-ARuJU1iwsq8medj5IrhAMasBPhJpY9_2w"
 
     val contentType = "application/json;charset=utf-8"
 
@@ -25,9 +27,35 @@ open class MoviesApiModel(private val api: MoviesApi) {
         )
 
             .map {
-            it.results
+                it.results
 
-        }.map(this::formatPictureUrl)
+            }.map(this::formatPictureUrl)
+    }
+
+
+    suspend fun getMoviesDeferred(list: Int = 1, page: Int = 1, sortBy: String): List<Movie>? {
+
+        try {
+            val response = api.getMoviesCoroutine(
+                type = contentType,
+                authorization = authorizationBearer,
+                list = list,
+                sort = sortBy,
+                page = page
+            ).await()
+
+            val movies = response.results
+            return movies.map {
+                it.picture = "https://image.tmdb.org/t/p/w500${it.poster_path}"
+                it
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+
+
     }
 
 
