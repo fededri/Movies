@@ -8,6 +8,8 @@ import android.widget.Toast
 import com.fedetorres.movies.*
 import com.fedetorres.movies.database.MovieDao
 import com.fedetorres.movies.database.entities.Movie
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -42,12 +44,13 @@ class MovieDetailActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_movie_detail)
 
 
         movieId = intent.getIntExtra(MOVIE_ID, 0)
 
-        (application as? MoviesApplication)?.component?.inject(this)
+
 
 
         progressBar.visible()

@@ -3,6 +3,7 @@ package com.fedetorres.movies.main
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -17,6 +18,10 @@ import android.widget.*
 import com.fedetorres.movies.*
 import com.fedetorres.movies.main.moviesList.ItemOffsetDecoration
 import com.fedetorres.movies.main.moviesList.MoviesAdapter
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -32,6 +37,7 @@ class MainActivity : BaseActivity() {
     private val tvNotMoviesFound: TextView by inflate(R.id.tv_no_movies_found)
 
 
+
     val buttons = mutableListOf<Button>()
 
     var currentState: MainState? = null
@@ -40,15 +46,13 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: MainViewModel
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_main)
 
         bindViews()
-        //showButtons()
-
-        val app = application as? MoviesApplication
-        app?.component?.inject(this)
 
 
         viewModel.getData().observe(this, Observer { if (it != null) onNewState(it) })
