@@ -1,141 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:background="#ddd"
-        android:layout_width="match_parent" android:layout_height="match_parent">
+<layout>
+    <data>
+        <import type="com.fedetorres.movies.main.CATEGORY"/>
+        <variable name="mainViewModel" type="com.fedetorres.movies.main.MainViewModel"/>
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:background="#ddd"
+            android:layout_width="match_parent" android:layout_height="match_parent">
 
 
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:visibility="invisible"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-
-        <android.support.constraint.ConstraintLayout
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/et_white_rounded"
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            <ImageView
-                    android:id="@+id/iv_search"
-                    android:src="@drawable/ic_search"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_width="20dp" android:layout_height="20dp"/>
-
-            <EditText
-                    android:id="@+id/et_search"
-                    android:inputType="textFilter"
-                    app:layout_constraintLeft_toRightOf="@+id/iv_search"
-                    android:hint="Search"
-                    android:maxLines="1"
-                    android:backgroundTint="@color/colorPrimary"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginEnd="8dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-        </android.support.constraint.ConstraintLayout>
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
 
-    </android.support.v7.widget.Toolbar>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/et_white_rounded"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    <TextView
-            android:id="@+id/tv_title"
-            android:textColor="@color/colorPrimary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:layout_constraintBottom_toTopOf="@+id/bt_popular"
-            android:text="Select a Category!"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <ImageView
+                        android:id="@+id/iv_search"
+                        android:src="@drawable/ic_search"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_width="20dp" android:layout_height="20dp"/>
 
-    <android.support.design.button.MaterialButton
-            android:id="@+id/bt_popular"
-            style="@style/ButtonCategoryStyle"
-            android:text="Popular"
-            app:cornerRadius="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/bt_top_rated"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+                <EditText
+                        android:id="@+id/et_search"
+                        android:inputType="textFilter"
+                        app:layout_constraintLeft_toRightOf="@+id/iv_search"
+                        android:hint="Search"
+                        android:maxLines="1"
+                        android:backgroundTint="@color/colorPrimary"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginEnd="8dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
 
-    <android.support.design.button.MaterialButton
-            android:id="@+id/bt_top_rated"
-            style="@style/ButtonCategoryStyle"
-            android:text="Top Rated"
-            app:cornerRadius="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/bt_upcoming"
-            app:layout_constraintTop_toBottomOf="@+id/bt_popular"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
-
-
-    <android.support.design.button.MaterialButton
-            android:id="@+id/bt_upcoming"
-            style="@style/ButtonCategoryStyle"
-            app:backgroundTint="@color/colorPrimary"
-            android:text="Upcoming"
-            app:cornerRadius="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bt_top_rated"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
 
 
-    <ProgressBar
-            android:id="@+id/progressBar"
-            android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </android.support.v7.widget.Toolbar>
+
+        <TextView
+                android:id="@+id/tv_title"
+                android:textColor="@color/colorPrimary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintBottom_toTopOf="@+id/bt_popular"
+                android:text="Select a Category!"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <android.support.design.button.MaterialButton
+                android:id="@+id/bt_popular"
+                android:onClick="@{() -> mainViewModel.onCategoryClick(CATEGORY.POPULAR)}"
+                style="@style/ButtonCategoryStyle"
+                android:text="Popular"
+                app:cornerRadius="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/bt_top_rated"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <android.support.design.button.MaterialButton
+                android:id="@+id/bt_top_rated"
+                style="@style/ButtonCategoryStyle"
+                android:onClick="@{() -> mainViewModel.onCategoryClick(CATEGORY.TOP_RATED)}"
+                android:text="Top Rated"
+                app:cornerRadius="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/bt_upcoming"
+                app:layout_constraintTop_toBottomOf="@+id/bt_popular"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
 
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:visibility="gone"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"/>
+        <android.support.design.button.MaterialButton
+                android:id="@+id/bt_upcoming"
+                android:onClick="@{() -> mainViewModel.onCategoryClick(CATEGORY.UPCOMING)}"
+                style="@style/ButtonCategoryStyle"
+                app:backgroundTint="@color/colorPrimary"
+                android:text="Upcoming"
+                app:cornerRadius="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bt_top_rated"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
 
-    <TextView
-            android:id="@+id/tv_no_movies_found"
-            android:text="@string/no_movies_were_found"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <ProgressBar
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 
-</android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                android:layout_width="0dp"
+                android:layout_height="0dp"/>
+
+
+        <TextView
+                android:id="@+id/tv_no_movies_found"
+                android:text="@string/no_movies_were_found"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/textView_search_keyword"
+                android:textSize="20sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:text="@{mainViewModel.searchKeyword}"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
+
 
 

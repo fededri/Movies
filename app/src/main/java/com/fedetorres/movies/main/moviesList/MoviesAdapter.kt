@@ -50,6 +50,7 @@ class MoviesAdapter(private val context: Context, var movies: MutableList<Movie>
                 context.startActivity(intent)
             }
 
+
             innerRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             innerRecyclerView.adapter = MovieInnerAdapter(context, item.picture)
             innerRecyclerView.addItemDecoration(ItemOffsetDecoration(40))

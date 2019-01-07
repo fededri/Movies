@@ -3,9 +3,8 @@ package com.fedetorres.movies.main
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -16,31 +15,18 @@ import android.view.animation.BounceInterpolator
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import com.fedetorres.movies.*
+import com.fedetorres.movies.databinding.ActivityMainBinding
 import com.fedetorres.movies.main.moviesList.ItemOffsetDecoration
 import com.fedetorres.movies.main.moviesList.MoviesAdapter
 import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
-    private val tvTitle: TextView by inflate(R.id.tv_title)
-    private val btPopular: Button by inflate(R.id.bt_popular)
-    private val btTopRated: Button by inflate(R.id.bt_top_rated)
-    private val btUpcoming: Button by inflate(R.id.bt_upcoming)
-    private val progressBar: ProgressBar  by inflate(R.id.progressBar)
-    private val recyclerView: RecyclerView by inflate(R.id.recyclerView)
-    private val etSearch: EditText by inflate(R.id.et_search)
-    private val toolbar: Toolbar by inflate(R.id.toolbar)
-    private val tvNotMoviesFound: TextView by inflate(R.id.tv_no_movies_found)
-
-
-
     val buttons = mutableListOf<Button>()
 
-    var currentState: MainState? = null
+
+    private var binding: ActivityMainBinding? = null
 
 
     @Inject
@@ -50,29 +36,30 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
-        setContentView(R.layout.activity_main)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding?.mainViewModel = viewModel
 
         bindViews()
 
 
-        viewModel.getData().observe(this, Observer { if (it != null) onNewState(it) })
+        viewModel.getData().observe(this, Observer { if (it != null) handleChanges(it) })
     }
 
     private fun showButtons() {
-        recyclerView.gone()
-        tvTitle.visible()
         noMoviesFoundMessage(false)
+        binding?.apply {
+            recyclerView.gone()
+            tvTitle.visible()
+            toolbar.animateView(
+                property = View.ALPHA,
+                finalViewVisibility = View.INVISIBLE,
+                duration = 500,
+                initialScale = 1f,
+                finalScale = 0f
+            )
+        }
 
-
-        toolbar.animateView(
-            property = View.ALPHA,
-            finalViewVisibility = View.INVISIBLE,
-            duration = 500,
-            initialScale = 1f,
-            finalScale = 0f
-        )
-
-        buttons.run { }
 
         buttons.forEach {
             it.visible()
@@ -86,7 +73,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun hideButtons(onHideEnd: (() -> Unit)? = null) {
-        tvTitle.gone()
+
         var counter = 1
         val listener = object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
@@ -95,14 +82,19 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        toolbar.visible()
-        toolbar.animateView(
-            property = View.ALPHA,
-            finalViewVisibility = View.VISIBLE,
-            duration = 500,
-            initialScale = 0f,
-            finalScale = 1f
-        )
+        binding?.apply {
+            tvTitle.gone()
+            toolbar.visible()
+            toolbar.animateView(
+                property = View.ALPHA,
+                finalViewVisibility = View.VISIBLE,
+                duration = 500,
+                initialScale = 0f,
+                finalScale = 1f
+            )
+        }
+
+
 
         buttons.forEach {
             it.animateView(
@@ -117,84 +109,76 @@ class MainActivity : BaseActivity() {
     }
 
     private fun bindViews() {
-        btPopular.setOnClickListener { viewModel.onCategoryClick(CATEGORY.POPULAR) }
-        btTopRated.setOnClickListener { viewModel.onCategoryClick(CATEGORY.TOP_RATED) }
-        btUpcoming.setOnClickListener { viewModel.onCategoryClick(CATEGORY.UPCOMING) }
-        buttons.add(btPopular)
-        buttons.add(btTopRated)
-        buttons.add(btUpcoming)
+        binding?.apply {
+            buttons.add(btPopular)
+            buttons.add(btTopRated)
+            buttons.add(btUpcoming)
 
-        etSearch.setOnEditorActionListener { v, actionId, event ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    viewModel.search(etSearch.text.toString())
-                    true
+            etSearch.setOnEditorActionListener { v, actionId, event ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        viewModel.search(etSearch.text.toString())
+                        true
+                    }
+                    else -> false
+
                 }
-                else -> false
-
             }
-
         }
     }
 
 
-    fun onNewState(state: MainState) {
+    fun handleChanges(state: MainState) {
 
-        if (currentState == state) return
-
-
-        updateProgressBar(state)
-        checkError(state)
-        if (state.selectedCategory == null) {
-            showButtons()
-        } else {
-            showMoviesList(state) // animations
+        when (state) {
+            MainState.GoBack -> super.onBackPressed()
+            MainState.ShowButtons -> showButtons()
+            is MainState.Movies -> showMoviesList(state)
+            is MainState.Loading -> updateProgressBar(state.loading)
+            is MainState.Error -> showError(state.message)
 
         }
-
-
-
-        currentState = state
 
     }
 
 
-    private fun updateProgressBar(state: MainState) {
+    private fun updateProgressBar(loading: Boolean) {
         when {
-            state.loading -> progressBar.visible()
-            else -> progressBar.gone()
+            loading -> binding?.progressBar?.visible()
+            else -> binding?.progressBar?.gone()
         }
 
     }
 
-    private fun checkError(state: MainState) {
-        if (state.error != null) {
-            Toast.makeText(this, state.error, Toast.LENGTH_SHORT).show()
-        }
+    private fun showError(error: String) {
+
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+
     }
 
 
-    private fun showMoviesList(state: MainState) {
-
-        if (foundMovies(state)) {
-            recyclerView.gone()
+    private fun showMoviesList(state: MainState.Movies) {
+        updateProgressBar(false)
+        if (state.movies.isEmpty()) {
+            binding?.recyclerView?.gone()
             noMoviesFoundMessage(true)
 
         } else {
             noMoviesFoundMessage(false)
+
             //first hide the buttons, and when animations ends show the list of movies
             hideButtons {
-                recyclerView.visible()
+                binding?.recyclerView?.visible()
                 if (state.movies != null) {
-                    if (recyclerView.adapter == null) {
+                    if (binding?.recyclerView?.adapter == null) {
                         val adapter = MoviesAdapter(this, state.movies.toMutableList())
-                        recyclerView.adapter = adapter
-                        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-                        recyclerView.addItemDecoration(ItemOffsetDecoration(this, R.dimen.movie_card_offset))
+                        binding?.recyclerView?.adapter = adapter
+                        binding?.recyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                        binding?.recyclerView?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+                        binding?.recyclerView?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.movie_card_offset))
 
                     } else {
-                        val adapter = recyclerView.adapter as? MoviesAdapter
+                        val adapter = binding?.recyclerView?.adapter as? MoviesAdapter
                         adapter?.updateMovies(state.movies)
                     }
                 }
@@ -205,22 +189,19 @@ class MainActivity : BaseActivity() {
     }
 
 
-    private fun foundMovies(state: MainState?) = state?.movies != null && state.movies.isEmpty()
-
-
     private fun noMoviesFoundMessage(visible: Boolean = false) {
         if (visible) {
-            tvNotMoviesFound.visible()
-            tvNotMoviesFound.animateView(
+            binding?.tvNoMoviesFound?.visible()
+            binding?.tvNoMoviesFound?.animateView(
                 property = View.ALPHA,
                 initialScale = 0f,
                 finalScale = 1f,
                 duration = 500,
                 finalViewVisibility = View.VISIBLE
             )
-        } else if (tvNotMoviesFound.visibility == View.VISIBLE) {
+        } else if (binding?.tvNoMoviesFound?.visibility == View.VISIBLE) {
             //only play hide animation if this view is visible
-            tvNotMoviesFound.animateView(
+            binding?.tvNoMoviesFound?.animateView(
                 property = View.ALPHA,
                 initialScale = 1f,
                 finalScale = 0f,
@@ -233,7 +214,7 @@ class MainActivity : BaseActivity() {
 
 
     override fun onBackPressed() {
-        if (currentState?.movies != null) viewModel.goBack() else super.onBackPressed()
+        viewModel.goBack()
     }
 
     override fun onDestroy() {

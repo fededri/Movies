@@ -3,6 +3,7 @@ package com.fedetorres.movies.main
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.databinding.ObservableField
 import android.util.Log
 import com.fedetorres.movies.network.ApiErrorParser
 import com.fedetorres.movies.database.entities.Movie
@@ -31,10 +32,16 @@ open class MainViewModel @Inject constructor(
     private val data: MutableLiveData<MainState> = MutableLiveData()
     private val compositeDisposable = CompositeDisposable()
     private var job: Job? = null
+    private var moviesAreShown = false
+    var searchKeyword = ObservableField<String>()
+    private var category: CATEGORY = CATEGORY.POPULAR
+
 
     init {
-        data.postValue(MainState())
+        searchKeyword.set("")
+        postState(MainState.ShowButtons)
     }
+
 
     fun getData(): LiveData<MainState> {
         return data
@@ -42,9 +49,9 @@ open class MainViewModel @Inject constructor(
 
 
     fun onCategoryClick(category: CATEGORY) {
-        val newState = state()?.category(category)
-        postState(newState)
-        getMovies(newState)
+
+        this.category = category
+        getMovies()
         //getMovies(newState)
     }
 
@@ -56,31 +63,31 @@ open class MainViewModel @Inject constructor(
     }
 
     fun goBack() {
+        if (moviesAreShown) {
+            moviesAreShown = false
+            postState(MainState.ShowButtons)
+        } else {
+            postState(MainState.GoBack)
+        }
 
-        val newState = state()
-            ?.loading(false)
-            ?.movies(null)
-            ?.category(null)
-        postState(newState)
     }
 
     fun search(text: String?) {
         //TODO API get list does not accept a "keyword" parameter, so I cant search movies based on user's input but I will searching on local movies
-        val newState = state()
-            ?.keyword(text)
-            ?.loading(true)
-
-        setState(newState)
-        searchMovies(newState)
+        text?.apply {
+            searchKeyword.set(this)
+        }
+        setState(MainState.Loading(false))
+        searchMovies()
     }
 
 
     /***********************Private Methods*********************************************************/
 
 
-    private fun getMovies(state: MainState?) {
-        val category = state?.selectedCategory
-        postState(state?.loading(true))
+    private fun getMovies() {
+
+        postState(MainState.Loading(true))
         val sort = getSortString(category)
 
         job = CoroutineScope(Dispatchers.IO).launch {
@@ -107,7 +114,8 @@ open class MainViewModel @Inject constructor(
 
     private fun onMoviesObtained(movies: List<Movie>) {
         Log.i(TAG, "Got movies")
-        postState(state()?.copy(movies = movies, loading = false, error = null))
+        postState(MainState.Movies(movies))
+        moviesAreShown = true
     }
 
 
@@ -117,12 +125,14 @@ open class MainViewModel @Inject constructor(
             message = apiErrorParser.parseError(error)
 
         }
-        postState(state()?.copy(loading = false, error = message, selectedCategory = null, movies = null))
+        message?.apply {
+            postState(MainState.Error(this))
+        }
 
     }
 
 
-    private fun searchMovies(state: MainState?) {
+    private fun searchMovies() {
 
         //Maybe it is better  to do a  SQL QUERY rather than filtering with RX, but  if this data were taken from the webservice it would be better to do this
         val disposable = repository.getMoviesFromDb()
@@ -130,10 +140,15 @@ open class MainViewModel @Inject constructor(
             .subscribeOn(ioScheduler)
             .flatMap {
                 Observable.fromIterable(it)
-            }.filter { if (state?.keyword != null) it.title.contains(state.keyword, true) else true }
+            }.filter {
+                if (searchKeyword.get()?.isNotBlank() == true) it.title.contains(
+                    searchKeyword.get()!!,
+                    true
+                ) else true
+            }
             .toList()
             .subscribe(this::onMoviesObtained) {
-                state()?.loading(false)?.error("No movies with ${state?.keyword} were found")
+                postState(MainState.NoMoviesFoundOnSearch)
             }
 
         compositeDisposable.add(disposable)

@@ -4,7 +4,6 @@ import android.app.Application
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.res.Resources
@@ -12,9 +11,6 @@ import com.fedetorres.movies.database.MovieDao
 import com.fedetorres.movies.database.entities.Movie
 import com.fedetorres.movies.main.*
 import com.fedetorres.movies.network.ApiErrorParser
-import com.fedetorres.movies.network.MoviesApi
-import com.fedetorres.movies.network.responses.CreatedBy
-import com.fedetorres.movies.network.responses.GetMoviesResponse
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -122,7 +118,7 @@ class MainViewModelTest {
 
         assert(moviesViewModel.getData().value?.movies == null)
         assert(moviesViewModel.getData().value?.loading == false)
-        assert(moviesViewModel.getData().value?.selectedCategory == null)
+        assert(moviesViewModel.getData().value?.SelectedCategory == null)
     }
 
     @Test

@@ -2,23 +2,25 @@ package com.fedetorres.movies.main
 
 import com.fedetorres.movies.database.entities.Movie
 
-data class MainState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val selectedCategory: CATEGORY? = null,
-    val movies: List<Movie>? = null,
-    val keyword: String? = null,
-    val currentPage: Int = 1
-) {
-    fun keyword(keyword: String?) = copy(keyword = keyword)
 
-    fun loading(loading: Boolean) = copy(loading = loading)
+sealed class MainState{
 
-    fun category(category: CATEGORY?) = copy(selectedCategory = category)
+    data class Loading(val loading : Boolean = false) : MainState()
 
-    fun movies(movies: List<Movie>?) = copy(movies = movies)
+    data class Error(val message: String)  : MainState()
 
-    fun error(error: String?) = copy(error = error)
+
+
+    data class Movies(val movies: List<Movie>): MainState()
+
+
+    data class Page(val page: Int) : MainState()
+
+    object ShowButtons : MainState()
+
+    object GoBack : MainState()
+
+    object NoMoviesFoundOnSearch : MainState()
 }
 
 
